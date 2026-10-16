@@ -359,7 +359,7 @@ L.forEach((l,i)=>{
 // speech (browser voice, de-DE)
 let voice=null;
 const pick=()=>{const v=speechSynthesis.getVoices();voice=v.find(x=>/^de(-|_)DE/i.test(x.lang)&&/google|natural|neural|premium|enhanced/i.test(x.name))||v.find(x=>/^de(-|_)DE/i.test(x.lang))||v.find(x=>/^de/i.test(x.lang))||null;
-  const w=document.getElementById('voicewarn'); if(voice)w.hidden=true;else if(v.length){w.textContent=UI[curLang].nov;w.hidden=false}};
+  const w=document.getElementById('voicewarn'); w.hidden=true};
 
 const SEG={"Guten Morgen": [0, 0.74], "Guten Tag": [1.81, 2.6300000000000003], "Guten Abend": [3.31, 4.14], "Gute Nacht": [4.87, 5.68], "Auf Wiedersehen": [6.53, 7.4399999999999995], "Tschüss": [8.5, 9.11], "Wie geht es Ihnen": [9.530000000000001, 10.36], "Mir geht es gut danke Und Ihnen": [11.010000000000002, 14.07], "Wie heißt du": [14.46, 15.2], "Ich heiße Abdou": [15.67, 16.68], "Woher kommst du": [17.27, 18.2], "Ich komme aus Marokko": [18.97, 20.12], "Wo wohnst du": [20.81, 21.72], "Ich wohne in Marrakesch": [22.24, 23.669999999999998], "Wie alt bist du": [24.029999999999998, 25.1], "Ich bin zwanzig Jahre alt": [26.34, 27.82], "Freut mich": [28.75, 29.56], "Wie spät ist es": [30.25, 31.509999999999998], "Es ist halb acht": [32.21, 33.3], "halb acht": [32.21, 33.3], "Es ist Viertel nach sieben": [34.09, 35.45], "Viertel nach sieben": [34.63, 35.45], "Ich stehe um sieben Uhr auf": [36.650000000000006, 38.26], "Ich kann dich heute Abend anrufen": [39.25, 41.13], "Ich muss meine Hausaufgaben machen": [41.56, 43.46]};
 const norm=t=>t.toLowerCase().replace(/[^a-zäöüß ]/g,' ').replace(/\s+/g,' ').trim();
@@ -429,6 +429,8 @@ const H3TR={"fr": ["Comment ça va ?", "Verbes qui changent de voyelle (du, er)"
 let curLang='fr';
 function setLang(l){
   curLang=TR[l]||l==='fr'?l:'fr';
+  const VL={fr:['🎬 Vidéo de la leçon','Ouvrir sur YouTube ↗'],en:['🎬 Lesson video','Open on YouTube ↗'],ar:['🎬 فيديو الدرس','افتح على يوتيوب ↗'],es:['🎬 Vídeo de la lección','Abrir en YouTube ↗']}[curLang];
+  document.querySelectorAll('.vid').forEach(v=>{v.querySelector('b').textContent=VL[0];v.querySelector('a').textContent=VL[1];if(curLang==='ar'){v.dir='rtl';v.lang='ar'}else{v.removeAttribute('dir');v.lang=curLang}});
   trEls.forEach((e,i)=>{const t=curLang==='fr'?trOrig[i]:(TR[curLang][i]??trOrig[i]);if(e.innerHTML!==t)e.innerHTML=t;if(curLang==='ar'){e.dir='rtl';e.lang='ar'}else{e.removeAttribute('dir');e.lang=curLang}});
   h3Els.forEach((e,i)=>{e.textContent=H3TR[curLang][i];if(curLang==='ar'){e.dir='rtl';e.lang='ar'}else{e.removeAttribute('dir');e.lang=curLang}});
   {const w=document.getElementById('voicewarn');if(!w.hidden)w.textContent=UI[curLang].nov}
@@ -439,7 +441,6 @@ function setLang(l){
 }
 document.getElementById('lang').addEventListener('change',e=>setLang(e.target.value));
 if('speechSynthesis' in window){pick();speechSynthesis.onvoiceschanged=pick}
-setTimeout(()=>{if(!voice){const w=document.getElementById('voicewarn');w.textContent=UI[curLang].nov;w.hidden=false}},1500);
 refresh();
 try{const l=localStorage.getItem(KEY+'-lang');if(l&&l!=='fr')setLang(l)}catch(e){}
 const au=document.getElementById('mainAudio'); if(au.getAttribute('src')==='AUDIO_SRC')document.getElementById('listen').hidden=true;
